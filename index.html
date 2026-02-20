@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dyyrex AI - MC Server</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f0f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Login Box */
+        #loginBox {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255,0,0,0.4);
+            text-align: center;
+            width: 320px;
+        }
+
+        #loginBox h2 {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #2a2a2a;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: red;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: darkred;
+        }
+
+        /* Chat Page */
+        #chatPage {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        header {
+            background: #1a1a1a;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: red;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        #chatBox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-size: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user {
+            background: red;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            margin-left: auto; 
+        }
+
+        .bot {
+            background: #2a2a2a;
+            border-left: 4px solid red;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        #inputArea {
+            display: flex;
+            padding: 15px;
+            background: #1a1a1a;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            margin: 0;
+        }
+
+        #sendBtn {
+            width: 80px;
+            margin: 0;
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: 1px solid red;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginBox">
+    <h2>Dyyrex AI Login</h2>
+    <input type="password" id="password" placeholder="Masukkan Password">
+    <button style="width:100%" onclick="login()">Login</button>
+</div>
+
+<div id="chatPage">
+    <header>
+        <span>Dyyrex AI - MC Server</span>
+        <button class="clear-btn" onclick="clearChat()">Clear Chat</button>
+    </header>
+    <div id="chatBox"></div>
+    <div id="inputArea">
+        <input type="text" id="userInput" placeholder="Tanya sesuatu..." autocomplete="off">
+        <button id="sendBtn" onclick="sendMessage()">Kirim</button>
+    </div>
+</div>
+
+<script>
+    const PASSWORD = "pp jule"; 
+    const API_KEY = 'https://api.openai.com/v1/chat/completions'; 
+
+    function login() {
+        const input = document.getElementById("password").value;
+        if (input === PASSWORD) {
+            document.getElementById("loginBox").style.display = "none";
+            document.getElementById("chatPage").style.display = "flex";
+        } else {
+            alert("Password salah!");
+        }
+    }
+
+    function clearChat() {
+        if(confirm("Hapus semua pesan?")) {
+            document.getElementById("chatBox").innerHTML = "";
+        }
+    }
+
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") sendMessage();
+    });
+
+    async function sendMessage() {
+        const input = document.getElementById("userInput");
+        const message = input.value.trim();
+        if (!message) return;
+
+        const chatBox = document.getElementById("chatBox");
+
+        // Pesan User
+        const userMsg = document.createElement("div");
+        userMsg.classList.add("message", "user");
+        userMsg.innerText = message;
+        chatBox.appendChild(userMsg);
+
+        // Loading Bot
+        const botMsg = document.createElement("div");
+        botMsg.classList.add("message", "bot");
+        botMsg.innerText = "Dyyrex AI sedang berpikir...";
+        chatBox.appendChild(botMsg);
+
+        input.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + API_KEY
+                },
+                body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "Kamu adalah Dyyrex AI, asisten khusus untuk server Minecraft. Jawab dengan gaya santai tapi profesional." },
+                        { role: "user", content: message }
+                    ]
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.choices && data.choices[0]) {
+                botMsg.innerText = data.choices[0].message.content;
+            } else {
+                botMsg.innerText = "Gagal dapet respon. Cek API Key!";
+            }
+
+        } catch (error) {
+            botMsg.innerText = "Terjadi error saat menghubungi AI.";
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+</body>
+  </html>
+
