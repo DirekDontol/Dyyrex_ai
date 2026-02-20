@@ -9,72 +9,35 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0f0f0f;
+    background: url("https://images.alphacoders.com/133/1332803.jpeg") no-repeat center center fixed;
+    background-size: cover;
     color: white;
+    height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-/* LOGIN */
-#loginBox {
-    background: #1a1a1a;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 0 25px rgba(255,0,0,0.4);
-    text-align: center;
-    width: 320px;
-}
-
-#loginBox h2 {
-    color: red;
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: none;
-    background: #2a2a2a;
-    color: white;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    background: red;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:hover {
-    background: darkred;
-}
-
-/* CHAT */
-#chatPage {
-    display: none;
-    width: 100%;
-    height: 100vh;
     flex-direction: column;
 }
 
+/* Overlay biar gelap */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: -1;
+}
+
+/* HEADER */
 header {
-    background: #1a1a1a;
+    background: rgba(20,20,20,0.8);
     padding: 15px;
     text-align: center;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     color: red;
     box-shadow: 0 0 15px rgba(255,0,0,0.4);
 }
 
+/* CHAT */
 #chatBox {
     flex: 1;
     padding: 20px;
@@ -88,7 +51,6 @@ header {
     padding: 12px;
     border-radius: 10px;
     max-width: 70%;
-    direction: ltr;
     word-wrap: break-word;
 }
 
@@ -98,14 +60,15 @@ header {
 }
 
 .bot {
-    background: #2a2a2a;
+    background: rgba(30,30,30,0.9);
     border-left: 4px solid red;
 }
 
+/* INPUT */
 #inputArea {
     display: flex;
     padding: 15px;
-    background: #1a1a1a;
+    background: rgba(20,20,20,0.8);
 }
 
 #userInput {
@@ -116,41 +79,36 @@ header {
     background: #2a2a2a;
     color: white;
 }
+
+button {
+    padding: 12px 18px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 8px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: darkred;
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginBox">
-    <h2>Dyyrex AI Login</h2>
-    <input type="password" id="password" placeholder="Masukkan Password">
-    <button onclick="login()">Login</button>
-</div>
+<header>Dyyrex AI - MC Server</header>
 
-<!-- CHAT -->
-<div id="chatPage">
-    <header>Dyyrex AI - MC Server</header>
-    <div id="chatBox"></div>
-    <div id="inputArea">
-        <input type="text" id="userInput" placeholder="Tanya sesuatu...">
-        <button onclick="sendMessage()">Kirim</button>
-    </div>
+<div id="chatBox"></div>
+
+<div id="inputArea">
+    <input type="text" id="userInput" placeholder="Tanya sesuatu...">
+    <button onclick="sendMessage()">Kirim</button>
 </div>
 
 <script>
-const PASSWORD = "111"; // ganti password di sini
-
-function login() {
-    const input = document.getElementById("password").value;
-    if (input === PASSWORD) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("chatPage").style.display = "flex";
-    } else {
-        alert("Password salah!");
-    }
-}
-
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const message = input.value.trim();
