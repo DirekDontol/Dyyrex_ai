@@ -3,161 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dyyrex AI - MC Server</title>
+<title>Dyyrex AI - Premium Interface</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url("https://images.alphacoders.com/133/1332803.jpeg") no-repeat center center fixed;
+    background: url('https://c4.wallpaperflare.com/wallpaper/517/523/704/anime-anime-girls-majo-no-tabitabi-elaina-majo-no-tabitabi-silver-hair-hd-wallpaper-preview.jpg') no-repeat center center fixed;
     background-size: cover;
-    color: white;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-/* Overlay biar gelap */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: -1;
+.app-window {
+    width:90%;
+    max-width:1200px;
+    height:85vh;
+    background: rgba(20,20,20,0.6);
+    backdrop-filter: blur(25px);
+    border-radius:20px;
+    display:flex;
+    overflow:hidden;
+    box-shadow:0 50px 100px rgba(0,0,0,0.5);
+    border:1px solid rgba(255,255,255,0.1);
 }
 
-/* HEADER */
-header {
-    background: rgba(20,20,20,0.8);
-    padding: 15px;
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: red;
-    box-shadow: 0 0 15px rgba(255,0,0,0.4);
+.sidebar {
+    width:300px;
+    background: rgba(0,0,0,0.4);
+    border-right:1px solid rgba(255,255,255,0.05);
+    display:flex;
+    flex-direction:column;
+    padding:20px;
 }
 
-/* CHAT */
-#chatBox {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+.sidebar-header {
+    color:white;
+    padding-bottom:20px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    margin-bottom:20px;
 }
 
-.message {
-    margin: 10px 0;
-    padding: 12px;
-    border-radius: 10px;
-    max-width: 70%;
-    word-wrap: break-word;
+.chat-item {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-radius:12px;
+    color:#ccc;
+    background: rgba(255,255,255,0.05);
 }
 
-.user {
-    background: red;
-    align-self: flex-end;
+.avatar {
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#444;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.bot {
-    background: rgba(30,30,30,0.9);
-    border-left: 4px solid red;
+.main-chat {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    background: rgba(255,255,255,0.03);
 }
 
-/* INPUT */
-#inputArea {
-    display: flex;
-    padding: 15px;
-    background: rgba(20,20,20,0.8);
+.chat-header {
+    padding:20px 30px;
+    background: rgba(0,0,0,0.1);
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    color:white;
 }
 
-#userInput {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    background: #2a2a2a;
-    color: white;
+.messages-container {
+    flex:1;
+    padding:30px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
 }
 
-button {
-    padding: 12px 18px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 8px;
-    background: red;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+.msg {
+    max-width:70%;
+    padding:12px 18px;
+    border-radius:18px;
+    font-size:0.95rem;
+    line-height:1.5;
+    word-wrap:break-word;
 }
 
-button:hover {
-    background: darkred;
+.msg.ai {
+    align-self:flex-start;
+    background: rgba(255,255,255,0.1);
+    color:#eee;
+    border-bottom-left-radius:2px;
 }
+
+.msg.user {
+    align-self:flex-end;
+    background: rgba(255,255,255,0.9);
+    color:#111;
+    border-bottom-right-radius:2px;
+}
+
+.input-bar {
+    padding:25px 35px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+    background: rgba(0,0,0,0.1);
+}
+
+.input-wrapper {
+    flex:1;
+    background: rgba(255,255,255,0.1);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    padding:5px 15px;
+    border:1px solid rgba(255,255,255,0.1);
+}
+
+.input-wrapper input {
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:white;
+    padding:10px;
+    font-size:1rem;
+}
+
+.btn-send {
+    background:transparent;
+    border:none;
+    color:#007AFF;
+    font-weight:bold;
+    cursor:pointer;
+    padding:10px;
+}
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:10px; }
 </style>
 </head>
-
 <body>
 
-<header>Dyyrex AI - MC Server</header>
+<div class="app-window">
+<div class="sidebar">
+<div class="sidebar-header">
+<h3>Dyyrex AI</h3>
+<p style="font-size:0.7rem;color:#888;">Intelligence System</p>
+</div>
+<div class="chat-item">
+<div class="avatar"><i class="fas fa-robot"></i></div>
+<div>
+<p style="font-weight:bold;font-size:0.9rem;">Dyyrex Assistant</p>
+<p style="font-size:0.7rem;color:#777;">Aktif sekarang</p>
+</div>
+</div>
+</div>
 
-<div id="chatBox"></div>
+<div class="main-chat">
+<div class="chat-header">
+<h4>Chat Aktif</h4>
+</div>
 
-<div id="inputArea">
-    <input type="text" id="userInput" placeholder="Tanya sesuatu...">
-    <button onclick="sendMessage()">Kirim</button>
+<div class="messages-container" id="chatDisplay">
+<div class="msg ai">
+Halo. Saya <b>Dyyrex AI</b>. Sistem siap digunakan.
+</div>
+</div>
+
+<div class="input-bar">
+<div class="input-wrapper">
+<input type="text" id="queryInput" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') triggerChat()">
+</div>
+<button class="btn-send" onclick="triggerChat()">SEND</button>
+</div>
+</div>
 </div>
 
 <script>
-async function sendMessage() {
-    const input = document.getElementById("userInput");
-    const message = input.value.trim();
-    if (!message) return;
+let isLoading = false;
 
-    const chatBox = document.getElementById("chatBox");
+async function triggerChat() {
+if (isLoading) return;
 
-    const userMsg = document.createElement("div");
-    userMsg.classList.add("message", "user");
-    userMsg.innerText = message;
-    chatBox.appendChild(userMsg);
+const input = document.getElementById('queryInput');
+const display = document.getElementById('chatDisplay');
+const message = input.value.trim();
+if (!message) return;
 
-    const botMsg = document.createElement("div");
-    botMsg.classList.add("message", "bot");
-    botMsg.innerText = "Dyyrex AI sedang berpikir...";
-    chatBox.appendChild(botMsg);
+isLoading = true;
 
-    input.value = "";
-    chatBox.scrollTop = chatBox.scrollHeight;
+const userDiv = document.createElement('div');
+userDiv.className = 'msg user';
+userDiv.textContent = message;
+display.appendChild(userDiv);
 
-    try {
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ message })
-        });
+input.value = "";
+display.scrollTop = display.scrollHeight;
 
-        const data = await response.json();
+const aiDiv = document.createElement('div');
+aiDiv.className = 'msg ai';
+aiDiv.textContent = "Dyyrex sedang mengetik";
+display.appendChild(aiDiv);
 
-        if (data.error) {
-            botMsg.innerText = "Error: " + JSON.stringify(data.error);
-        } else {
-            botMsg.innerText = data.choices[0].message.content;
-        }
+let dots = 0;
+const typingInterval = setInterval(() => {
+dots = (dots + 1) % 4;
+aiDiv.textContent = "Dyyrex sedang mengetik" + ".".repeat(dots);
+}, 400);
 
-    } catch (err) {
-        botMsg.innerText = "Gagal terhubung ke server.";
-    }
+try {
+const response = await fetch("/api/chat", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ message })
+});
 
-    chatBox.scrollTop = chatBox.scrollHeight;
+clearInterval(typingInterval);
+
+if (!response.ok) throw new Error("Server error");
+
+const data = await response.json();
+
+let aiText = "Tidak ada respon dari AI.";
+
+if (data.error) {
+aiText = "Error: " + JSON.stringify(data.error);
+} else if (data.choices && data.choices[0]) {
+aiText = data.choices[0].message.content;
 }
 
-document.getElementById("userInput").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        sendMessage();
-    }
-});
+aiDiv.textContent = "";
+let i = 0;
+
+function typeEffect() {
+if (i < aiText.length) {
+aiDiv.textContent += aiText.charAt(i);
+i++;
+display.scrollTop = display.scrollHeight;
+setTimeout(typeEffect, 15);
+}
+}
+typeEffect();
+
+} catch (error) {
+clearInterval(typingInterval);
+aiDiv.textContent = "Gagal terhubung ke server.";
+console.error(error);
+}
+
+isLoading = false;
+display.scrollTop = display.scrollHeight;
+}
 </script>
 
 </body>
