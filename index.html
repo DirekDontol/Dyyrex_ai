@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeForge — Bengkel Ide & Progress Coding</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- =====================================================================
+     SPRITE IKON — didefinisikan sekali, dipakai lewat <use href="#icon-x">
+     Menjaga file tetap ringan tanpa dependency icon library eksternal.
+     ===================================================================== -->
+<svg class="icon-sprite" aria-hidden="true">
+  <defs>
+    <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="icon-sparkle" viewBox="0 0 24 24"><path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2L12 2z"/></symbol>
+    <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/></symbol>
+    <symbol id="icon-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4V3z"/></symbol>
+    <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M4 20V10M11 20V4M18 20v-7" stroke-linecap="round"/></symbol>
+    <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 5H4a3 3 0 0 0 3 5M17 5h3a3 3 0 0 1-3 5" fill="none"/><path d="M10 15h4v3h-4z"/><path d="M8 21h8" stroke-linecap="round"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke-linecap="round"/></symbol>
+    <symbol id="icon-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M10 2h4" stroke-linecap="round"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 0 0 4 0" fill="none"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke-linecap="round"/></symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke-linecap="round"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round"/></symbol>
+    <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M12 2c2 3-1 4-1 7a3 3 0 1 0 6 0c0-1-.3-2-1-3 3 1 5 4 5 7.5A7.5 7.5 0 0 1 6 13.5C6 8 12 6 12 2z"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6L12 3z"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M6 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-1" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" fill="none" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<div id="app">
+
+  <!-- =====================================================================
+       SIDEBAR — navigasi utama antar section
+       ===================================================================== -->
+  <aside id="sidebar" class="glass-panel">
+    <div class="sidebar-brand">
+      <span class="brand-mark"><svg class="icon"><use href="#icon-sparkle"/></svg></span>
+      <span class="brand-name">Code<b>Forge</b></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg class="icon"><use href="#icon-grid"/></svg><span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="projects">
+        <svg class="icon"><use href="#icon-folder"/></svg><span>Projects</span>
+      </button>
+      <button class="nav-item" data-view="bookmarks">
+        <svg class="icon"><use href="#icon-bookmark"/></svg><span>Bookmarks</span>
+      </button>
+      <button class="nav-item" data-view="challenge">
+        <svg class="icon"><use href="#icon-calendar"/></svg><span>Daily Challenge</span>
+      </button>
+      <button class="nav-item" data-view="focus">
+        <svg class="icon"><use href="#icon-timer"/></svg><span>Focus Mode</span>
+      </button>
+      <button class="nav-item" data-view="stats">
+        <svg class="icon"><use href="#icon-chart"/></svg><span>Statistics</span>
+      </button>
+      <button class="nav-item" data-view="achievements">
+        <svg class="icon"><use href="#icon-trophy"/></svg><span>Achievements</span>
+      </button>
+    </nav>
+
+    <!-- Ringkasan level & XP developer, selalu terlihat di sidebar -->
+    <div class="sidebar-level">
+      <div class="level-row">
+        <span class="level-badge" id="sidebarLevelBadge">Lv.1</span>
+        <span class="level-name" id="sidebarLevelName">Rookie Coder</span>
+      </div>
+      <div class="xp-bar"><div class="xp-bar-fill" id="sidebarXpFill"></div></div>
+      <span class="xp-label" id="sidebarXpLabel">0 / 100 XP</span>
+    </div>
+  </aside>
+
+  <!-- overlay untuk sidebar mobile -->
+  <div id="sidebarOverlay"></div>
+
+  <!-- =====================================================================
+       MAIN — topbar + area konten (berganti sesuai view aktif)
+       ===================================================================== -->
+  <div id="mainArea">
+
+    <header id="topbar">
+      <button id="menuToggle" class="icon-btn" aria-label="Buka menu">
+        <svg class="icon"><use href="#icon-menu"/></svg>
+      </button>
+
+      <div class="topbar-search">
+        <svg class="icon"><use href="#icon-search"/></svg>
+        <input type="text" id="globalSearch" placeholder="Cari project…" autocomplete="off">
+      </div>
+
+      <div class="topbar-actions">
+        <button id="notifBtn" class="icon-btn" aria-label="Notifikasi">
+          <svg class="icon"><use href="#icon-bell"/></svg>
+          <span class="notif-dot" id="notifDot" hidden></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- panel notifikasi dropdown -->
+    <div id="notifPanel" class="glass-panel notif-panel">
+      <div class="notif-panel-header">
+        <span>Notifikasi</span>
+        <button id="notifClear" class="text-btn">Bersihkan</button>
+      </div>
+      <div id="notifList" class="notif-list"></div>
+    </div>
+
+    <main id="viewport">
+
+      <!-- ================= VIEW: DASHBOARD ================= -->
+      <section class="view active" id="view-dashboard">
+
+        <div class="hero glass-panel">
+          <div class="hero-grid-fx" aria-hidden="true"></div>
+          <div class="hero-content">
+            <p class="hero-greeting" id="heroGreeting">Selamat datang kembali,</p>
+            <h1 class="hero-title">Mau membangun apa hari ini?</h1>
+            <p class="hero-sub">Biarkan CodeForge menyalakan ide project berikutnya untukmu.</p>
+            <button id="generateBtn" class="btn btn-primary btn-lg">
+              <svg class="icon"><use href="#icon-sparkle"/></svg>
+              Generate Project
+            </button>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+
+          <section class="panel glass-panel potd-panel">
+            <div class="panel-header">
+              <h2><svg class="icon"><use href="#icon-star"/></svg> Project of the Day</h2>
+            </div>
+            <div class="panel-body" id="potdBody">
+              <!-- diisi JS: kartu project atau empty state -->
+            </div>
+          </section>
+
+          <section class="panel glass-panel recent-panel">
+            <div class="panel-header">
+              <h2><svg class="icon"><use href="#icon-folder"/></svg> Recent Projects</h2>
+              <button class="text-btn" data-view-link="projects">Lihat semua</button>
+            </div>
+            <div class="panel-body" id="recentBody">
+              <!-- diisi JS -->
+            </div>
+          </section>
+
+        </div>
+      </section>
+
+      <!-- ================= VIEW: PROJECTS ================= -->
+      <section class="view" id="view-projects">
+        <div class="view-header">
+          <h1>Projects</h1>
+          <div class="view-filters" id="projectFilters">
+            <button class="filter-chip active" data-filter="all">Semua</button>
+            <button class="filter-chip" data-filter="in-progress">Berjalan</button>
+            <button class="filter-chip" data-filter="completed">Selesai</button>
+            <button class="filter-chip" data-filter="not-started">Belum Mulai</button>
+          </div>
+        </div>
+        <div class="project-grid" id="projectsGrid"></div>
+      </section>
+
+      <!-- ================= VIEW: BOOKMARKS ================= -->
+      <section class="view" id="view-bookmarks">
+        <div class="view-header">
+          <h1>Bookmarks</h1>
+          <div class="view-filters" id="bookmarkFilters">
+            <button class="filter-chip active" data-filter="all">Semua</button>
+            <button class="filter-chip" data-filter="Beginner">Beginner</button>
+            <button class="filter-chip" data-filter="Intermediate">Intermediate</button>
+            <button class="filter-chip" data-filter="Advanced">Advanced</button>
+          </div>
+        </div>
+        <div class="project-grid" id="bookmarksGrid"></div>
+      </section>
+
+      <!-- ================= VIEW: DAILY CHALLENGE ================= -->
+      <section class="view" id="view-challenge">
+        <div class="view-header"><h1>Daily Challenge</h1></div>
+        <div class="panel glass-panel" id="challengePanel"></div>
+      </section>
+
+      <!-- ================= VIEW: FOCUS MODE ================= -->
+      <section class="view" id="view-focus">
+        <div class="view-header"><h1>Focus Mode</h1></div>
+        <div class="panel glass-panel" id="focusPanel"></div>
+      </section>
+
+      <!-- ================= VIEW: STATISTICS ================= -->
+      <section class="view" id="view-stats">
+        <div class="view-header"><h1>Statistics</h1></div>
+        <div class="stats-grid" id="statsGrid"></div>
+      </section>
+
+      <!-- ================= VIEW: ACHIEVEMENTS ================= -->
+      <section class="view" id="view-achievements">
+        <div class="view-header"><h1>Achievements</h1></div>
+        <div class="achievement-grid" id="achievementGrid"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- =====================================================================
+     MODAL — kontainer generik, kontennya di-render lewat JS (Modal.open)
+     ===================================================================== -->
+<div id="modalOverlay" class="modal-overlay">
+  <div id="modalBox" class="modal-box glass-panel" role="dialog" aria-modal="true">
+    <button id="modalClose" class="icon-btn modal-close" aria-label="Tutup">
+      <svg class="icon"><use href="#icon-x"/></svg>
+    </button>
+    <div id="modalContent" class="modal-content"></div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     TOAST — notifikasi sementara di pojok layar
+     ===================================================================== -->
+<div id="toastLayer" aria-live="polite"></div>
+
+<!-- =====================================================================
+     LOADING OVERLAY — dipakai saat proses "generate" berjalan
+     ===================================================================== -->
+<div id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <p id="loadingText">Meracik project…</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
