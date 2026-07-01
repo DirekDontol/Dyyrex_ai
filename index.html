@@ -1,230 +1,88 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Hybrid Nexus OS</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Nexus OS</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Menggunakan Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- ========================================================= -->
-  <!-- BOOT SCREEN: animasi pembuka sebelum desktop muncul        -->
-  <!-- ========================================================= -->
-  <div id="boot-screen">
-    <div class="boot-logo">
-      <svg viewBox="0 0 100 100" class="boot-ring">
-        <circle cx="50" cy="50" r="42"></circle>
-      </svg>
-      <span class="boot-glyph">N</span>
-    </div>
-    <h1 class="boot-title">HYBRID NEXUS <span>OS</span></h1>
-    <div class="boot-bar"><div class="boot-bar-fill"></div></div>
-    <p class="boot-status" id="bootStatus">Menginisialisasi kernel…</p>
-  </div>
-
-  <!-- ========================================================= -->
-  <!-- DESKTOP: wallpaper + ikon aplikasi                          -->
-  <!-- ========================================================= -->
-  <main id="desktop">
-
-    <!-- Ikon-ikon aplikasi di desktop -->
-    <div class="desktop-icons" id="desktopIcons">
-      <button class="desktop-icon" data-app="notepad">
-        <span class="icon-glyph">📝</span>
-        <span class="icon-label">Notepad</span>
-      </button>
-      <button class="desktop-icon" data-app="calculator">
-        <span class="icon-glyph">🧮</span>
-        <span class="icon-label">Calculator</span>
-      </button>
-      <button class="desktop-icon" data-app="explorer">
-        <span class="icon-glyph">🗂️</span>
-        <span class="icon-label">File Explorer</span>
-      </button>
-      <button class="desktop-icon" data-app="settings">
-        <span class="icon-glyph">⚙️</span>
-        <span class="icon-label">Settings</span>
-      </button>
-      <button class="desktop-icon" data-app="about">
-        <span class="icon-glyph">◈</span>
-        <span class="icon-label">About</span>
-      </button>
-    </div>
-
-    <!-- Wadah tempat semua window dirender secara dinamis -->
-    <div id="windowLayer"></div>
-
-  </main>
-
-  <!-- ========================================================= -->
-  <!-- START MENU                                                 -->
-  <!-- ========================================================= -->
-  <div id="startMenu" class="glass-panel">
-    <div class="start-header">
-      <div class="start-avatar">N</div>
-      <div>
-        <p class="start-username">Direk</p>
-        <p class="start-usersub">Hybrid Nexus User</p>
-      </div>
-    </div>
-    <div class="start-search">
-      <input type="text" id="startSearch" placeholder="Cari aplikasi…" autocomplete="off">
-    </div>
-    <div class="start-apps" id="startApps">
-      <!-- diisi otomatis lewat JavaScript -->
-    </div>
-    <div class="start-footer">
-      <span id="startClockMini"></span>
-      <button id="startPowerBtn" title="Restart tampilan">⏻ Restart</button>
-    </div>
-  </div>
-
-  <!-- overlay untuk menutup start menu saat klik di luar -->
-  <div id="overlay"></div>
-
-  <!-- ========================================================= -->
-  <!-- TASKBAR                                                    -->
-  <!-- ========================================================= -->
-  <footer id="taskbar" class="glass-panel">
-    <button id="startBtn" class="taskbar-btn start-btn" aria-label="Buka Start Menu">
-      <span class="nexus-mark">◈</span>
-    </button>
-
-    <div id="taskbarApps" class="taskbar-apps">
-      <!-- ikon aplikasi yang sedang berjalan muncul di sini -->
-    </div>
-
-    <div class="taskbar-tray">
-      <div class="tray-clock">
-        <span id="clockTime">00:00</span>
-        <span id="clockDate">--- --</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ========================================================= -->
-  <!-- TEMPLATE KONTEN APLIKASI (disalin ke dalam window saat dibuka) -->
-  <!-- ========================================================= -->
-  <template id="tpl-notepad">
-    <div class="app-notepad">
-      <textarea id="notepadArea" placeholder="Tulis sesuatu… otomatis tersimpan ke perangkat kamu."></textarea>
-      <div class="notepad-status">
-        <span id="notepadSaved">Tersimpan</span>
-      </div>
-    </div>
-  </template>
-
-  <template id="tpl-calculator">
-    <div class="app-calculator">
-      <div class="calc-display">
-        <div class="calc-expression" id="calcExpression">&nbsp;</div>
-        <div class="calc-result" id="calcResult">0</div>
-      </div>
-      <div class="calc-keys">
-        <button class="calc-key key-op" data-key="clear">AC</button>
-        <button class="calc-key key-op" data-key="sign">±</button>
-        <button class="calc-key key-op" data-key="percent">%</button>
-        <button class="calc-key key-accent" data-key="/">÷</button>
-
-        <button class="calc-key" data-key="7">7</button>
-        <button class="calc-key" data-key="8">8</button>
-        <button class="calc-key" data-key="9">9</button>
-        <button class="calc-key key-accent" data-key="*">×</button>
-
-        <button class="calc-key" data-key="4">4</button>
-        <button class="calc-key" data-key="5">5</button>
-        <button class="calc-key" data-key="6">6</button>
-        <button class="calc-key key-accent" data-key="-">−</button>
-
-        <button class="calc-key" data-key="1">1</button>
-        <button class="calc-key" data-key="2">2</button>
-        <button class="calc-key" data-key="3">3</button>
-        <button class="calc-key key-accent" data-key="+">+</button>
-
-        <button class="calc-key key-wide" data-key="0">0</button>
-        <button class="calc-key" data-key=".">.</button>
-        <button class="calc-key key-accent key-equal" data-key="=">=</button>
-      </div>
-    </div>
-  </template>
-
-  <template id="tpl-explorer">
-    <div class="app-explorer">
-      <aside class="explorer-tree" id="explorerTree">
-        <!-- diisi lewat JavaScript -->
-      </aside>
-      <section class="explorer-view" id="explorerView">
-        <!-- diisi lewat JavaScript -->
-      </section>
-    </div>
-  </template>
-
-  <template id="tpl-settings">
-    <div class="app-settings">
-
-      <div class="settings-group">
-        <h3>Warna Aksen</h3>
-        <p class="settings-desc">Pilih warna utama sistem</p>
-        <div class="accent-swatches" id="accentSwatches">
-          <button class="swatch" data-accent="#5eead4" style="--sw:#5eead4"></button>
-          <button class="swatch" data-accent="#8b7cf6" style="--sw:#8b7cf6"></button>
-          <button class="swatch" data-accent="#f472b6" style="--sw:#f472b6"></button>
-          <button class="swatch" data-accent="#fb923c" style="--sw:#fb923c"></button>
-          <button class="swatch" data-accent="#60a5fa" style="--sw:#60a5fa"></button>
-          <button class="swatch" data-accent="#4ade80" style="--sw:#4ade80"></button>
+    <!-- Fake Boot Animation -->
+    <div id="boot-screen" class="screen">
+        <div class="logo-container">
+            <i class="fa-solid fa-compact-disc fa-spin logo-icon"></i>
+            <h1>Hybrid Nexus</h1>
+            <div class="loading-bar"><div class="loading-progress"></div></div>
         </div>
-      </div>
-
-      <div class="settings-group">
-        <h3>Wallpaper</h3>
-        <p class="settings-desc">Pilih gradasi latar desktop</p>
-        <div class="wallpaper-options" id="wallpaperOptions">
-          <button class="wp-swatch" data-wp="wp-nexus"></button>
-          <button class="wp-swatch" data-wp="wp-aurora"></button>
-          <button class="wp-swatch" data-wp="wp-magma"></button>
-          <button class="wp-swatch" data-wp="wp-abyss"></button>
-          <button class="wp-swatch" data-wp="wp-mono"></button>
-        </div>
-      </div>
-
-      <div class="settings-group">
-        <h3>Mode Tampilan</h3>
-        <p class="settings-desc">Tingkat kegelapan antarmuka</p>
-        <div class="theme-toggle">
-          <button class="theme-btn" data-theme="dark">Dark</button>
-          <button class="theme-btn" data-theme="darker">Deep Space</button>
-        </div>
-      </div>
-
-      <div class="settings-group">
-        <h3>Efek Blur</h3>
-        <p class="settings-desc">Kekuatan efek kaca (glassmorphism)</p>
-        <input type="range" id="blurRange" min="0" max="30" value="18">
-      </div>
-
     </div>
-  </template>
 
-  <template id="tpl-about">
-    <div class="app-about">
-      <div class="about-logo">◈</div>
-      <h2>Hybrid Nexus OS</h2>
-      <p class="about-version">Versi 1.0.0 · Build Web</p>
-      <p class="about-desc">
-        Sistem operasi simulasi berbasis web — dibangun sepenuhnya dengan
-        HTML, CSS, dan JavaScript murni. Tanpa framework, tanpa backend,
-        seluruh data tersimpan langsung di perangkatmu.
-      </p>
-      <ul class="about-list">
-        <li>100% berjalan di browser</li>
-        <li>Data lokal, privasi terjaga</li>
-        <li>Dibangun untuk pengembangan mobile-first</li>
-      </ul>
-      <p class="about-footer">Dibuat dengan ♦ oleh Direk</p>
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen hidden glass-panel">
+        <div class="login-box">
+            <div class="avatar"><i class="fa-solid fa-user"></i></div>
+            <h2>Admin</h2>
+            <input type="password" id="login-pin" placeholder="Enter PIN (1234)" autofocus>
+            <button id="login-btn">Login</button>
+        </div>
     </div>
-  </template>
 
-  <script src="script.js"></script>
+    <!-- Main Desktop -->
+    <div id="desktop" class="hidden">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="app-icon" onclick="openWindow('notepad', 'Notepad', '<textarea class=\'app-textarea\' placeholder=\'Ketik sesuatu...\'></textarea>')">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Notepad</span>
+            </div>
+            <div class="app-icon" onclick="openWindow('settings', 'Settings', '<h2>Pengaturan OS</h2><p>Ganti tema dan wallpaper di sini.</p>')">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Window Container -->
+        <div id="windows-container"></div>
+
+        <!-- Start Menu -->
+        <div id="start-menu" class="glass-panel hidden">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search apps, files, settings (Ctrl+K)...">
+            </div>
+            <div class="pinned-apps">
+                <!-- Aplikasi yang dipin -->
+            </div>
+        </div>
+
+        <!-- Taskbar -->
+        <div id="taskbar" class="glass-panel">
+            <div class="taskbar-left">
+                <button id="start-btn" class="taskbar-btn"><i class="fa-brands fa-windows"></i></button>
+            </div>
+            <div class="taskbar-center" id="open-apps-taskbar">
+                <!-- Ikon aplikasi yang sedang terbuka akan muncul di sini -->
+            </div>
+            <div class="taskbar-right">
+                <div class="system-tray">
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-battery-full"></i>
+                </div>
+                <div id="clock-container">
+                    <span id="time">00:00</span>
+                    <span id="date">1 Jan 2026</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette (Ctrl+K) -->
+    <div id="command-palette" class="glass-panel hidden">
+        <input type="text" id="cmd-input" placeholder="Search or type a command...">
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
